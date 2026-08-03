@@ -31,8 +31,20 @@ fun NavApp(
             LoginScreen(
                 modifier = Modifier,
                 onEnterClick = {
-                    navController.navigate("dashboard_screen") {
+                    navController.navigate("dashboard_screen")
+                },
+                onRegisterClick = {
+                    navController.navigate("register_screen") {
                     }
+                }
+            )
+        }
+
+        composable("register_screen") {
+            RegisterScreen(
+                modifier = Modifier,
+                onLoginClick = {
+                    navController.navigate("login_screen")
                 }
             )
         }
