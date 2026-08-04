@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,21 +29,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskfin.components.CustomTextField
+import com.example.taskfin.components.RegisterBottomSection
 import com.example.taskfin.ui.theme.Inter
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    onLoginClick: () -> Unit = {}
+    onLoginClick: () -> Unit = {},
+    onRegisterNowClick: () -> Unit = {}
 ){
+
+    var password by remember { mutableStateOf("") }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    var confirmPassword by remember { mutableStateOf("") }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
     val mainVerticalScrollState = rememberScrollState()
 
     Box(
@@ -144,7 +152,7 @@ fun RegisterScreen(
                 CustomTextField(
                     value = email,
                     onValueChange = { email = it },
-                    placeholder = "nama@kampus.ac.id",
+                    placeholder = "nama@gmail.com",
                     leadingIcon = painterResource(R.drawable.ic_email)
                 )
 
@@ -166,6 +174,24 @@ fun RegisterScreen(
                     placeholder = "••••••••",
                     leadingIcon = painterResource(R.drawable.ic_password),
 
+                    visualTransformation = if (isPasswordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(
+                                if (isPasswordVisible) R.drawable.ic_visibilityon else R.drawable.ic_visibilityoff
+                            ),
+                            contentDescription = "Toggle Password Visibility",
+                            tint = Color(0xFF8C8A9E),
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { isPasswordVisible = !isPasswordVisible }
+                        )
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -185,12 +211,31 @@ fun RegisterScreen(
                     onValueChange = { confirmPassword = it },
                     placeholder = "••••••••",
                     leadingIcon = painterResource(R.drawable.ic_verified),
+
+                    visualTransformation = if (isConfirmPasswordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(
+                                if (isConfirmPasswordVisible) R.drawable.ic_visibilityon else R.drawable.ic_visibilityoff
+                            ),
+                            contentDescription = "Toggle Confirm Password Visibility",
+                            tint = Color(0xFF8C8A9E),
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { isConfirmPasswordVisible = !isConfirmPasswordVisible }
+                        )
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))
 
                 RegisterBottomSection(
-                    onRegisterClick = { /* Handle pendaftaran */ },
+                    onRegisterNowClick = { onRegisterNowClick() },
                     onLoginClick = { onLoginClick() }
                 )
             }

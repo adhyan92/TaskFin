@@ -30,7 +30,7 @@ import com.example.taskfin.ui.theme.Inter
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    onNavigateToLogin: () -> Unit
+    onNavigateToBoarding1: () -> Unit
 ){
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -42,7 +42,7 @@ fun SplashScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    onNavigateToLogin()
+                    onNavigateToBoarding1()
                 },
             contentScale = ContentScale.Crop
         )

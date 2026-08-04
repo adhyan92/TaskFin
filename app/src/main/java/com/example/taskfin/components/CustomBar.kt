@@ -1,4 +1,4 @@
-package com.example.taskfin
+package com.example.taskfin.components
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.taskfin.R
 import com.example.taskfin.ui.theme.Inter
 import data.BottomNavItem
 

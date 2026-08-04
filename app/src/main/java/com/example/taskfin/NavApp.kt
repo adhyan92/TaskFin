@@ -21,7 +21,31 @@ fun NavApp(
         composable("splash_screen") {
             SplashScreen(
                 modifier = Modifier,
-                onNavigateToLogin = {
+                onNavigateToBoarding1 = {
+                    navController.navigate("on_boarding1")
+                }
+            )
+        }
+
+        composable("on_boarding1") {
+            onBoarding1(
+                modifier = Modifier,
+                onContinueClick = {
+                    navController.navigate("on_boarding2")
+                },
+                onSkipClick = {
+                    navController.navigate("login_screen")
+                }
+            )
+        }
+
+        composable("on_boarding2") {
+            onBoarding2(
+                modifier = Modifier,
+                onContinueClick = {
+                    navController.navigate("login_screen")
+                },
+                onSkipClick = {
                     navController.navigate("login_screen")
                 }
             )
@@ -43,8 +67,20 @@ fun NavApp(
         composable("register_screen") {
             RegisterScreen(
                 modifier = Modifier,
+                onRegisterNowClick = {
+                    navController.navigate("input_data_diri")
+                },
                 onLoginClick = {
                     navController.navigate("login_screen")
+                }
+            )
+        }
+
+        composable("input_data_diri") {
+            InputPersonalData(
+                modifier = Modifier,
+                onBackClick = {
+                    navController.navigate("register_screen")
                 }
             )
         }

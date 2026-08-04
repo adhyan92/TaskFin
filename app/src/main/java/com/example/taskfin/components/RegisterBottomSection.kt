@@ -1,4 +1,4 @@
-package com.example.taskfin
+package com.example.taskfin.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,10 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.taskfin.R
 
 @Composable
 fun RegisterBottomSection(
-    onRegisterClick: () -> Unit = {},
+    onRegisterNowClick: () -> Unit = {},
     onGoogleClick: () -> Unit = {},
     onAppleClick: () -> Unit = {},
     onLoginClick: () -> Unit = {}
@@ -88,7 +89,7 @@ fun RegisterBottomSection(
                         )
                     )
                 )
-                .clickable { onRegisterClick() },
+                .clickable { onRegisterNowClick() },
             contentAlignment = Alignment.Center
         ) {
             Row(

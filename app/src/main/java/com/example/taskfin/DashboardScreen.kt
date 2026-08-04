@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.taskfin.components.CustomBottomBar
 import com.example.taskfin.ui.theme.Inter
 
 @Composable

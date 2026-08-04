@@ -1,7 +1,8 @@
-package com.example.taskfin
+package com.example.taskfin.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,5 +103,70 @@ fun CustomTextField(
                 trailingIcon()
             }
         }
+    }
+}
+
+@Composable
+fun TextFormLabel(text: String, color: Color = Color(0xFF464555)) {
+    Text(
+        text = text,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        color = color,
+        modifier = Modifier.padding(bottom = 6.dp)
+    )
+}
+
+@Composable
+fun CustomOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder, color = Color.Gray) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = customTextFieldColors(),
+        singleLine = true
+    )
+}
+
+@Composable
+fun customTextFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedContainerColor = Color.White,
+    unfocusedContainerColor = Color.White,
+    focusedBorderColor = Color(0xFF3525CD),
+    unfocusedBorderColor = Color(0xFFDCDCDC)
+)
+
+@Composable
+fun GenderButton(
+    text: String,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    activeColor: Color
+) {
+    Box(
+        modifier = modifier
+            .height(48.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (isSelected) activeColor else Color.White)
+            .border(
+                width = 1.dp,
+                color = if (isSelected) activeColor else Color(0xFFDCDCDC),
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            color = if (isSelected) Color.White else Color.Black
+        )
     }
 }
