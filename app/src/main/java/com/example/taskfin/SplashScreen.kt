@@ -59,7 +59,7 @@ fun SplashScreen(
             painter = painterResource(R.drawable.logo_taskfin),
             contentDescription = "Logo TaskFin",
             modifier = Modifier
-                .size(200.dp),
+                .size(150.dp),
             contentScale = ContentScale.Fit
         )
 

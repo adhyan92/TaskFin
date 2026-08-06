@@ -1,21 +1,26 @@
 package com.example.taskfin
 
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun NavApp(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass
 ){
+
+    val profileViewModel: ProfileViewModel = viewModel()
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = "splash_screen",
-        modifier = Modifier
+        modifier = modifier
     ) {
 
         composable("splash_screen") {
@@ -58,8 +63,7 @@ fun NavApp(
                     navController.navigate("dashboard_screen")
                 },
                 onRegisterClick = {
-                    navController.navigate("register_screen") {
-                    }
+                    navController.navigate("register_screen")
                 }
             )
         }
@@ -79,8 +83,12 @@ fun NavApp(
         composable("input_data_diri") {
             InputPersonalData(
                 modifier = Modifier,
+                viewModel = profileViewModel,
                 onBackClick = {
                     navController.navigate("register_screen")
+                },
+                onSaveClick = {
+                    navController.navigate("profile_screen")
                 }
             )
         }
@@ -89,6 +97,26 @@ fun NavApp(
             DashboardScreen(
                 modifier = Modifier,
                 navController = navController
+            )
+        }
+
+        composable("profile_screen") {
+            ProfileScreen(
+                modifier = Modifier,
+                viewModel = profileViewModel,
+                onSettingsClick = {
+
+                },
+                onBackClick = {
+                    navController.navigate("input_data_diri")
+                }
+            )
+        }
+
+        composable("edit_profile") {
+            EditProfileScreen(
+                viewModel = profileViewModel,
+                onSaveSuccess = { navController.popBackStack() }
             )
         }
     }

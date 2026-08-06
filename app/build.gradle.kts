@@ -41,6 +41,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.core:core-ktx:1.15.0")

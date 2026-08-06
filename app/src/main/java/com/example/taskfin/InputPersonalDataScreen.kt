@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,20 +57,28 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.taskfin.components.CustomOutlinedTextField
 import com.example.taskfin.components.GenderButton
 import com.example.taskfin.components.TextFormLabel
 import com.example.taskfin.components.customTextFieldColors
+import androidx.compose.ui.platform.LocalContext
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputPersonalData(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    viewModel: ProfileViewModel,
+    onSaveClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val mainVerticalScrollState = rememberScrollState()
+
+    val savedFullName by viewModel.fullName.collectAsState()
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -85,344 +94,421 @@ fun InputPersonalData(
     val statusOptions = listOf("Mahasiswa", "Pelajar", "Pekerja")
 
     var universitas by remember { mutableStateOf("") }
-    var semester by remember { mutableStateOf("") }
-    var jurusan by remember { mutableStateOf("") }
 
+    var semesterExpanded by remember { mutableStateOf(false) }
+    var selectedSemester by remember { mutableStateOf("") }
+    val semesterOptions = (1..8).map { it.toString() }
+
+    var jurusan by remember { mutableStateOf("") }
     var tanggalLahir by remember { mutableStateOf("") }
     var jenisKelamin by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
     var nomorTelepon by remember { mutableStateOf("") }
 
     val primaryColor = Color(0xFF3525CD)
+    val backgroundColor = Color(0xFFF8F7FF)
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 60.dp)
-            .padding(horizontal = 24.dp)
-            .verticalScroll(mainVerticalScrollState),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(backgroundColor)
     ) {
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Kembali",
-                tint = primaryColor,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .size(22.dp)
-                    .clickable { onBackClick() }
-            )
-
-            Text(
-                text = "Lengkapi Profilmu",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = Inter,
-                color = primaryColor
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Box(
-            modifier = Modifier.size(130.dp)
+        Surface(
+            color = Color.White,
+            shadowElevation = 8.dp,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-                    .border(
-                        width = 3.dp,
-                        color = Color(0xFFC7C4D8),
-                        shape = CircleShape
-                    )
-                    .background(Color.White),
-                contentAlignment = Alignment.Center
-            ) {
-                if (imageUri != null) {
-                    AsyncImage(
-                        model = imageUri,
-                        contentDescription = "Foto Profil",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Foto Profil",
-                        tint = Color.Black,
-                        modifier = Modifier.size(70.dp)
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-4).dp, y = (-4).dp)
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(primaryColor)
-                    .clickable {
-                        imagePickerLauncher.launch("image/*")
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CameraAlt,
-                    contentDescription = "Ubah Foto",
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "UNGGAH FOTO PROFIL",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = Inter,
-            letterSpacing = 0.6.sp,
-            color = Color(0xFF464555)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.Start
-        ) {
-
-            Column {
-                TextFormLabel("NAMA LENGKAP")
-                CustomOutlinedTextField(
-                    value = namaLengkap,
-                    onValueChange = { namaLengkap = it },
-                    placeholder = "Masukkan nama lengkap"
-                )
-            }
-
-            Column {
-                TextFormLabel("STATUS")
-                ExposedDropdownMenuBox(
-                    expanded = statusExpanded,
-                    onExpandedChange = { statusExpanded = !statusExpanded }
-                ) {
-                    OutlinedTextField(
-                        value = selectedStatus,
-                        onValueChange = {},
-                        readOnly = true,
-                        placeholder = { Text("Pilih status", color = Color.Gray, fontFamily = Inter) },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusExpanded) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = customTextFieldColors()
-                    )
-
-                    DropdownMenu(
-                        expanded = statusExpanded,
-                        onDismissRequest = { statusExpanded = false },
-                        modifier = Modifier.fillMaxWidth(0.85f)
-                    ) {
-                        statusOptions.forEach { status ->
-                            DropdownMenuItem(
-                                text = { Text(text = status, fontFamily = Inter) },
-                                onClick = {
-                                    selectedStatus = status
-                                    statusExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            AnimatedVisibility(visible = selectedStatus == "Mahasiswa") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFFF2EFFD))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min)
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .width(6.dp)
-                                .fillMaxHeight()
-                                .background(
-                                    color = primaryColor,
-                                    shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
-                                )
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Column {
-                                TextFormLabel("UNIVERSITAS", color = primaryColor)
-                                CustomOutlinedTextField(
-                                    value = universitas,
-                                    onValueChange = { universitas = it },
-                                    placeholder = "Masukkan universitas anda"
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    TextFormLabel("SEMESTER", color = primaryColor)
-                                    CustomOutlinedTextField(
-                                        value = semester,
-                                        onValueChange = { semester = it },
-                                        placeholder = " "
-                                    )
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    TextFormLabel("JURUSAN", color = primaryColor)
-                                    CustomOutlinedTextField(
-                                        value = jurusan,
-                                        onValueChange = { jurusan = it },
-                                        placeholder = " "
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Column {
-                TextFormLabel("TANGGAL LAHIR")
-                CustomOutlinedTextField(
-                    value = tanggalLahir,
-                    onValueChange = { tanggalLahir = it },
-                    placeholder = "mm/dd/yyyy"
-                )
-            }
-
-            Column {
-                TextFormLabel("JENIS KELAMIN")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    GenderButton(
-                        text = "Laki-laki",
-                        isSelected = jenisKelamin == "Laki-laki",
-                        modifier = Modifier.weight(1f),
-                        onClick = { jenisKelamin = "Laki-laki" },
-                        activeColor = primaryColor
-                    )
-                    GenderButton(
-                        text = "Perempuan",
-                        isSelected = jenisKelamin == "Perempuan",
-                        modifier = Modifier.weight(1f),
-                        onClick = { jenisKelamin = "Perempuan" },
-                        activeColor = primaryColor
-                    )
-                }
-            }
-
-            Column {
-                TextFormLabel("ALAMAT")
-                OutlinedTextField(
-                    value = alamat,
-                    onValueChange = { alamat = it },
-                    placeholder = { Text("Masukkan alamat domisili", color = Color.Gray, fontFamily = Inter) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = customTextFieldColors(),
-                    maxLines = 4
-                )
-            }
-
-            Column {
-                TextFormLabel("NOMOR TELEPON (OPSIONAL)")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .height(56.dp)
-                            .background(Color(0xFFEFEFEF), shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
-                            .border(1.dp, Color(0xFFDCDCDC), shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
-                            .padding(horizontal = 16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "+62", fontWeight = FontWeight.Bold, color = Color.Gray, fontFamily = Inter)
-                    }
-
-                    OutlinedTextField(
-                        value = nomorTelepon,
-                        onValueChange = { nomorTelepon = it },
-                        placeholder = { Text("8123456789", color = Color.Gray, fontFamily = Inter) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        colors = customTextFieldColors()
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = { /* Handle simpan profil */ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                    .padding(top = 56.dp, bottom = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Kembali",
+                    tint = primaryColor,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .size(22.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onBackClick()
+                        }
+                )
+
+                Text(
+                    text = "Lengkapi Profilmu",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primaryColor,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(mainVerticalScrollState)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Box(
+                modifier = Modifier.size(130.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .border(
+                            width = 4.dp,
+                            color = Color(0xFFC7C4D8),
+                            shape = CircleShape
+                        )
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Simpan Profil",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Inter,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    if (imageUri != null) {
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = "Foto Profil",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Foto Profil",
+                            tint = Color.Black,
+                            modifier = Modifier.size(70.dp)
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset(x = (-4).dp, y = (-4).dp)
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(primaryColor)
+                        .clickable {
+                            imagePickerLauncher.launch("image/*")
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = Color.White
+                        imageVector = Icons.Default.CameraAlt,
+                        contentDescription = "Ubah Foto",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "UNGGAH FOTO PROFIL",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Inter,
+                letterSpacing = 0.6.sp,
+                color = Color(0xFF464555)
+            )
+
             Spacer(modifier = Modifier.height(32.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+
+                Column {
+                    TextFormLabel("NAMA LENGKAP")
+                    CustomOutlinedTextField(
+                        value = namaLengkap,
+                        onValueChange = { namaLengkap = it },
+                        placeholder = "Masukkan nama lengkap"
+                    )
+                }
+
+                Column {
+                    TextFormLabel("STATUS")
+                    ExposedDropdownMenuBox(
+                        expanded = statusExpanded,
+                        onExpandedChange = { statusExpanded = !statusExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedStatus,
+                            onValueChange = {},
+                            readOnly = true,
+                            placeholder = { Text("Pilih status", color = Color.Gray, fontFamily = Inter) },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusExpanded) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = customTextFieldColors()
+                        )
+
+                        DropdownMenu(
+                            expanded = statusExpanded,
+                            onDismissRequest = { statusExpanded = false },
+                            modifier = Modifier.fillMaxWidth(0.85f)
+                        ) {
+                            statusOptions.forEach { status ->
+                                DropdownMenuItem(
+                                    text = { Text(text = status, fontFamily = Inter) },
+                                    onClick = {
+                                        selectedStatus = status
+                                        statusExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                AnimatedVisibility(visible = selectedStatus == "Mahasiswa") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFF2EFFD))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min)
+                        ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .width(6.dp)
+                                    .fillMaxHeight()
+                                    .background(
+                                        color = primaryColor,
+                                        shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
+                                    )
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Column {
+                                    TextFormLabel("UNIVERSITAS", color = primaryColor)
+                                    CustomOutlinedTextField(
+                                        value = universitas,
+                                        onValueChange = { universitas = it },
+                                        placeholder = "Masukkan universitas anda"
+                                    )
+                                }
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        TextFormLabel("SEMESTER", color = primaryColor)
+                                        ExposedDropdownMenuBox(
+                                            expanded = semesterExpanded,
+                                            onExpandedChange = { semesterExpanded = !semesterExpanded }
+                                        ) {
+                                            OutlinedTextField(
+                                                value = selectedSemester,
+                                                onValueChange = {},
+                                                readOnly = true,
+                                                placeholder = { Text("Pilih", color = Color.Gray, fontSize = 12.sp) },
+                                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = semesterExpanded) },
+                                                modifier = Modifier.fillMaxWidth().menuAnchor(),
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors = customTextFieldColors()
+                                            )
+
+                                            DropdownMenu(
+                                                expanded = semesterExpanded,
+                                                onDismissRequest = { semesterExpanded = false }
+                                            ) {
+                                                semesterOptions.forEach { sem ->
+                                                    DropdownMenuItem(
+                                                        text = { Text(text = sem) },
+                                                        onClick = {
+                                                            selectedSemester = sem
+                                                            semesterExpanded = false
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        TextFormLabel("JURUSAN", color = primaryColor)
+                                        CustomOutlinedTextField(
+                                            value = jurusan,
+                                            onValueChange = { jurusan = it },
+                                            placeholder = "Jurusan anda"
+                                        )
+                                    }
+                                }
+
+                                Button(
+                                    onClick = {
+
+                                        imageUri?.let { uri -> viewModel.updateProfileImage(context, uri) }
+
+                                        viewModel.updateProfileData(
+                                            name = namaLengkap,
+                                            univ = universitas,
+                                            bDate = tanggalLahir,
+                                            gen = jenisKelamin,
+                                            addr = alamat,
+                                            phone = nomorTelepon,
+                                            sem = selectedSemester,
+                                            jur = jurusan,
+                                            userStatus = selectedStatus
+                                        )
+                                        onSaveClick()
+                                    },
+                                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                                ) {
+                                    Text("Simpan Profil", fontWeight = FontWeight.Bold, color = Color.White)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Column {
+                    TextFormLabel("TANGGAL LAHIR")
+                    CustomOutlinedTextField(
+                        value = tanggalLahir,
+                        onValueChange = { tanggalLahir = it },
+                        placeholder = "mm/dd/yyyy"
+                    )
+                }
+
+                Column {
+                    TextFormLabel("JENIS KELAMIN")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        GenderButton(
+                            text = "Laki-laki",
+                            isSelected = jenisKelamin == "Laki-laki",
+                            modifier = Modifier.weight(1f),
+                            onClick = { jenisKelamin = "Laki-laki" },
+                            activeColor = primaryColor
+                        )
+                        GenderButton(
+                            text = "Perempuan",
+                            isSelected = jenisKelamin == "Perempuan",
+                            modifier = Modifier.weight(1f),
+                            onClick = { jenisKelamin = "Perempuan" },
+                            activeColor = primaryColor
+                        )
+                    }
+                }
+
+                Column {
+                    TextFormLabel("ALAMAT")
+                    OutlinedTextField(
+                        value = alamat,
+                        onValueChange = { alamat = it },
+                        placeholder = { Text("Masukkan alamat domisili", color = Color.Gray, fontFamily = Inter) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = customTextFieldColors(),
+                        maxLines = 4
+                    )
+                }
+
+                Column {
+                    TextFormLabel("NOMOR TELEPON (OPSIONAL)")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(56.dp)
+                                .background(Color(0xFFEFEFEF), shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
+                                .border(1.dp, Color(0xFFDCDCDC), shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "+62", fontWeight = FontWeight.Bold, color = Color.Gray, fontFamily = Inter)
+                        }
+
+                        OutlinedTextField(
+                            value = nomorTelepon,
+                            onValueChange = { nomorTelepon = it },
+                            placeholder = { Text("8123456789", color = Color.Gray, fontFamily = Inter) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            colors = customTextFieldColors()
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = {
+                        imageUri?.let { uri ->
+                            viewModel.updateProfileImage(context, uri)
+                        }
+                        onSaveClick()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Simpan Profil",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = Inter,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }

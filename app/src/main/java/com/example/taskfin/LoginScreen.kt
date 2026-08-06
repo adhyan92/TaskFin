@@ -104,7 +104,7 @@ fun LoginScreen(
                     painter = painterResource(R.drawable.ic_taskfin),
                     contentDescription = "Icon TaskFin",
                     modifier = Modifier.size(40.dp),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.FillBounds
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -257,14 +257,16 @@ fun LoginScreen(
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = Inter,
                         color = Color(0xFF5E4AE3),
-                        modifier = Modifier
-                            .clickable {
-                                Toast.makeText(
-                                    context,
-                                    "Feature Coming Soon",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            Toast.makeText(
+                                context,
+                                "Feature Coming Soon",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     )
                 }
 
@@ -472,12 +474,16 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 fontFamily = Inter,
                 color = Color(0xFF3525CD),
-                modifier = Modifier
-                    .clickable { onRegisterClick() },
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    onRegisterClick()
+                }
             )
         }
 
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -488,7 +494,7 @@ fun LoginScreen(
                 painter = painterResource(R.drawable.ic_verified),
                 contentDescription = null,
                 tint = Color(0xFF1B1B24).copy(alpha = 0.5f),
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(12.dp)
             )
 
             Spacer(modifier = Modifier.width(8.dp))

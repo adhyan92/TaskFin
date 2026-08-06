@@ -3,6 +3,7 @@ package com.example.taskfin
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import com.example.taskfin.ui.theme.Inter
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel,
     onLoginClick: () -> Unit = {},
     onRegisterNowClick: () -> Unit = {}
 ){
@@ -75,7 +77,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(60.dp))
 
             Image(
-                painter = painterResource(R.drawable.ic_register),
+                painter = painterResource(R.drawable.logo_register),
                 contentDescription = null,
                 modifier = Modifier.size(120.dp),
                 contentScale = ContentScale.Fit
@@ -189,7 +191,12 @@ fun RegisterScreen(
                             tint = Color(0xFF8C8A9E),
                             modifier = Modifier
                                 .size(20.dp)
-                                .clickable { isPasswordVisible = !isPasswordVisible }
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    isPasswordVisible = !isPasswordVisible
+                                }
                         )
                     }
                 )
@@ -227,7 +234,12 @@ fun RegisterScreen(
                             tint = Color(0xFF8C8A9E),
                             modifier = Modifier
                                 .size(20.dp)
-                                .clickable { isConfirmPasswordVisible = !isConfirmPasswordVisible }
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    isConfirmPasswordVisible = !isConfirmPasswordVisible
+                                }
                         )
                     }
                 )
@@ -235,7 +247,10 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 RegisterBottomSection(
-                    onRegisterNowClick = { onRegisterNowClick() },
+                    onRegisterNowClick = {
+                        viewModel.setRegisterData(fullName, email)
+                        onRegisterNowClick()
+                    },
                     onLoginClick = { onLoginClick() }
                 )
             }
