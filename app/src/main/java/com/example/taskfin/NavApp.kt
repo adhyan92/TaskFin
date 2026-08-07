@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 fun NavApp(
     modifier: Modifier = Modifier,
     windowSizeClass: WindowSizeClass
-){
+) {
 
     val profileViewModel: ProfileViewModel = viewModel()
     val navController = rememberNavController()
@@ -60,7 +60,9 @@ fun NavApp(
             LoginScreen(
                 modifier = Modifier,
                 onEnterClick = {
-                    navController.navigate("dashboard_screen")
+                    navController.navigate("dashboard_screen") {
+                        popUpTo("splash_screen") { inclusive = true }
+                    }
                 },
                 onRegisterClick = {
                     navController.navigate("register_screen")
@@ -71,6 +73,7 @@ fun NavApp(
         composable("register_screen") {
             RegisterScreen(
                 modifier = Modifier,
+                viewModel = profileViewModel,
                 onRegisterNowClick = {
                     navController.navigate("input_data_diri")
                 },
@@ -85,10 +88,12 @@ fun NavApp(
                 modifier = Modifier,
                 viewModel = profileViewModel,
                 onBackClick = {
-                    navController.navigate("register_screen")
+                    navController.popBackStack()
                 },
                 onSaveClick = {
-                    navController.navigate("profile_screen")
+                    navController.navigate("profile_screen") {
+                        popUpTo("splash_screen") { inclusive = true }
+                    }
                 }
             )
         }
@@ -103,12 +108,12 @@ fun NavApp(
         composable("profile_screen") {
             ProfileScreen(
                 modifier = Modifier,
+                navController = navController,
                 viewModel = profileViewModel,
                 onSettingsClick = {
-
                 },
                 onBackClick = {
-                    navController.navigate("input_data_diri")
+                    navController.popBackStack()
                 }
             )
         }

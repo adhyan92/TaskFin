@@ -87,7 +87,7 @@ fun InputPersonalData(
         imageUri = uri
     }
 
-    var namaLengkap by remember { mutableStateOf("") }
+    var namaLengkap by remember { mutableStateOf(savedFullName) }
 
     var statusExpanded by remember { mutableStateOf(false) }
     var selectedStatus by remember { mutableStateOf("") }
@@ -100,6 +100,7 @@ fun InputPersonalData(
     val semesterOptions = (1..8).map { it.toString() }
 
     var jurusan by remember { mutableStateOf("") }
+
     var tanggalLahir by remember { mutableStateOf("") }
     var jenisKelamin by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
@@ -333,9 +334,11 @@ fun InputPersonalData(
                                                 value = selectedSemester,
                                                 onValueChange = {},
                                                 readOnly = true,
-                                                placeholder = { Text("Pilih", color = Color.Gray, fontSize = 12.sp) },
+                                                placeholder = { Text("Pilih", color = Color.Gray, fontFamily = Inter) },
                                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = semesterExpanded) },
-                                                modifier = Modifier.fillMaxWidth().menuAnchor(),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .menuAnchor(),
                                                 shape = RoundedCornerShape(12.dp),
                                                 colors = customTextFieldColors()
                                             )
@@ -346,7 +349,7 @@ fun InputPersonalData(
                                             ) {
                                                 semesterOptions.forEach { sem ->
                                                     DropdownMenuItem(
-                                                        text = { Text(text = sem) },
+                                                        text = { Text(text = sem, fontFamily = Inter) },
                                                         onClick = {
                                                             selectedSemester = sem
                                                             semesterExpanded = false
@@ -365,31 +368,6 @@ fun InputPersonalData(
                                             placeholder = "Jurusan anda"
                                         )
                                     }
-                                }
-
-                                Button(
-                                    onClick = {
-
-                                        imageUri?.let { uri -> viewModel.updateProfileImage(context, uri) }
-
-                                        viewModel.updateProfileData(
-                                            name = namaLengkap,
-                                            univ = universitas,
-                                            bDate = tanggalLahir,
-                                            gen = jenisKelamin,
-                                            addr = alamat,
-                                            phone = nomorTelepon,
-                                            sem = selectedSemester,
-                                            jur = jurusan,
-                                            userStatus = selectedStatus
-                                        )
-                                        onSaveClick()
-                                    },
-                                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-                                ) {
-                                    Text("Simpan Profil", fontWeight = FontWeight.Bold, color = Color.White)
                                 }
                             }
                         }
@@ -479,6 +457,17 @@ fun InputPersonalData(
                         imageUri?.let { uri ->
                             viewModel.updateProfileImage(context, uri)
                         }
+                        viewModel.updateProfileData(
+                            name = namaLengkap,
+                            univ = universitas,
+                            bDate = tanggalLahir,
+                            gen = jenisKelamin,
+                            addr = alamat,
+                            phone = nomorTelepon,
+                            sem = selectedSemester,
+                            jur = jurusan,
+                            userStatus = selectedStatus
+                        )
                         onSaveClick()
                     },
                     modifier = Modifier

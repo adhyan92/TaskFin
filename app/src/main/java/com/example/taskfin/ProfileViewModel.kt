@@ -16,7 +16,6 @@ class ProfileViewModel : ViewModel() {
     private val _profileImageUri = MutableStateFlow<Uri?>(null)
     val profileImageUri: StateFlow<Uri?> = _profileImageUri.asStateFlow()
 
-    // State Data Diri Pengguna
     private val _fullName = MutableStateFlow("")
     val fullName: StateFlow<String> = _fullName.asStateFlow()
 
@@ -46,6 +45,11 @@ class ProfileViewModel : ViewModel() {
 
     private val _phoneNumber = MutableStateFlow("")
     val phoneNumber: StateFlow<String> = _phoneNumber.asStateFlow()
+
+    fun isEmailRegistered(userEmail: String): Boolean {
+
+        return _email.value.isNotBlank() && _email.value.equals(userEmail, ignoreCase = true)
+    }
 
     fun setRegisterData(name: String, userEmail: String) {
         _fullName.value = name

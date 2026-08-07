@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,18 +49,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskfin.ui.theme.Inter
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onEnterClick: () -> Unit,
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    viewModel: ProfileViewModel = viewModel()
 ){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val googleAuthHelper = remember { GoogleAuthHelper(context) }
+
+    val webClientId = "836256864311-t7skmj5mes5sd98jtni2pbtnpm1qfmst.apps.googleusercontent.com"
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -420,11 +428,45 @@ fun LoginScreen(
                         .border(1.dp, Color(0xFFE3E2EA), RoundedCornerShape(14.dp))
                         .background(Color.White)
                         .clickable {
-                            Toast.makeText(
-                                context,
-                                "Feature Coming Soon",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            coroutineScope.launch {
+                                googleAuthHelper.signInWithGoogle(
+                                    webClientId = webClientId,
+                                    onSuccess = { googleEmail, googleName ->
+
+                                        viewModel.setRegisterData(googleName, googleEmail)
+
+
+                                        val isUserRegistered = viewModel.isEmailRegistered(googleEmail)
+
+                                        if (isUserRegistered) {
+
+                                            Toast.makeText(
+                                                context,
+                                                "Selamat datang kembali, $googleName!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                            onEnterClick()
+                                        } else {
+
+                                            Toast.makeText(
+                                                context,
+                                                "Akun belum terdaftar. Silakan lengkapi pendaftaran.",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+
+                                            onRegisterClick()
+                                        }
+                                    },
+                                    onError = { errorMsg ->
+                                        Toast.makeText(
+                                            context,
+                                            errorMsg,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                )
+                            }
                         },
                     contentAlignment = Alignment.Center
                 ) {

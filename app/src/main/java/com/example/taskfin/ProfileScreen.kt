@@ -50,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -117,7 +118,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
                 .background(Color(0xFFF8F7FF))
         ) {
 
@@ -393,22 +394,41 @@ fun ProfileScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 0.dp,
+                                    bottomStart = 0.dp,
+                                    topEnd = 14.dp,
+                                    bottomEnd = 14.dp
+                                )
+                            )
                             .background(Color(0xFFE2F7ED))
-                            .padding(14.dp)
+
+                            .drawBehind {
+                                drawRect(
+                                    color = Color(0xFF1E824C),
+                                    size = size.copy(width = 4.dp.toPx())
+                                )
+                            }
+
+                            .padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.Top) {
+                        Row(
+                            verticalAlignment = Alignment.Top
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
                                 contentDescription = null,
                                 tint = Color(0xFF1E824C),
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .padding(top = 2.dp)
+                                    .padding(top = 1.dp)
                             )
+
                             Spacer(modifier = Modifier.width(10.dp))
+
                             Text(
-                                text = "Data ini membantu kami mempersonalisasi tips keuangan mahasiswa yang relevan dengan jadwal akademik Anda.",
+                                text = "Data ini membantu kami\nmempersonalisasi tips keuangan\nmahasiswa yang relevan dengan jadwal\nakademik Anda.",
                                 fontSize = 12.sp,
                                 color = Color(0xFF1E824C),
                                 lineHeight = 16.sp

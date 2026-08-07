@@ -38,12 +38,18 @@ fun CustomTextField(
     placeholder: String,
     leadingIcon: Painter,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     strokeColor: Color = Color(0xFF6B7280),
     strokeWidth: Float = 1f,
     trailingIcon: (@Composable () -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
+
+    val backgroundColor = if (enabled) Color(0xFFFFFCFA) else Color(0xFFF1F1F5)
+    val textColor = if (enabled) Color(0xFF2E2C3D) else Color(0xFF757575)
+    val borderColor = if (enabled) strokeColor else Color(0xFFE0E0E0)
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -51,10 +57,10 @@ fun CustomTextField(
             .clip(RoundedCornerShape(14.dp))
             .border(
                 width = strokeWidth.dp,
-                color = strokeColor,
+                color = borderColor,
                 shape = RoundedCornerShape(14.dp)
             )
-            .background(Color(0xFFFFFCFA)),
+            .background(backgroundColor),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
@@ -66,7 +72,7 @@ fun CustomTextField(
             Icon(
                 painter = leadingIcon,
                 contentDescription = null,
-                tint = Color(0xFF8C8A9E),
+                tint = if (enabled) Color(0xFF8C8A9E) else Color(0xFFA09EB1),
                 modifier = Modifier.size(20.dp)
             )
 
@@ -75,10 +81,11 @@ fun CustomTextField(
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
+                enabled = enabled,
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 14.sp,
-                    color = Color(0xFF2E2C3D)
+                    color = textColor
                 ),
                 visualTransformation = visualTransformation,
                 keyboardOptions = keyboardOptions,
@@ -96,7 +103,6 @@ fun CustomTextField(
                     }
                 }
             )
-
 
             if (trailingIcon != null) {
                 Spacer(modifier = Modifier.width(10.dp))

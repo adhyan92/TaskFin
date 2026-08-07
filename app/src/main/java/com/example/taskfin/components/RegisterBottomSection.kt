@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,10 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskfin.R
@@ -35,47 +30,9 @@ fun RegisterBottomSection(
     onAppleClick: () -> Unit = {},
     onLoginClick: () -> Unit = {}
 ) {
-    var isChecked by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Checkbox(
-                checked = isChecked,
-                onCheckedChange = { isChecked = it },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = Color(0xFF3525CD),
-                    uncheckedColor = Color(0xFF8C8A9E)
-                )
-            )
-
-            val termsText = buildAnnotatedString {
-                append("Saya menyetujui ")
-                withStyle(style = SpanStyle(color = Color(0xFF3525CD), fontWeight = FontWeight.Medium)) {
-                    append("Syarat & Ketentuan")
-                }
-                append(" serta ")
-                withStyle(style = SpanStyle(color = Color(0xFF3525CD), fontWeight = FontWeight.Medium)) {
-                    append("Kebijakan Privasi")
-                }
-                append(".")
-            }
-
-            Text(
-                text = termsText,
-                fontSize = 14.sp,
-                color = Color(0xFF464555),
-                lineHeight = 18.sp,
-                fontWeight = FontWeight.Normal
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         Box(
             modifier = Modifier

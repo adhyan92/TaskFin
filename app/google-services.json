@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "836256864311",
+    "project_id": "taskfin-dcd48",
+    "storage_bucket": "taskfin-dcd48.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836256864311:android:2a7a551ecf56b6801ec7b2",
+        "android_client_info": {
+          "package_name": "com.example.taskfin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW72LUIkolK1QOxii66w03IMJJ6dAlLXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
