@@ -187,7 +187,7 @@ fun LoginScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Inter,
-                    color = Color(0xFF777587)
+                    color = Color(0xFF464555)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -257,7 +257,7 @@ fun LoginScreen(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = Inter,
-                        color = Color(0xFF777587)
+                        color = Color(0xFF464555)
                     )
                     Text(
                         text = "Lupa?",
@@ -328,7 +328,7 @@ fun LoginScreen(
                                             text = "••••••••",
                                             fontSize = 14.sp,
                                             fontFamily = Inter,
-                                            color = Color(0xFF2E2C3D)
+                                            color = Color(0xFFA09EB1)
                                         )
                                     }
                                     innerTextField()

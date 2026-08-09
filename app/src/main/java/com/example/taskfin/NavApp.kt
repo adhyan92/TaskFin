@@ -101,7 +101,23 @@ fun NavApp(
         composable("dashboard_screen") {
             DashboardScreen(
                 modifier = Modifier,
-                navController = navController
+                navController = navController,
+                onSettingsClick = {
+                    navController.navigate("settings_screen")
+                }
+            )
+        }
+
+        composable("settings_screen") {
+            SettingsScreen(
+                modifier = Modifier,
+                viewModel = profileViewModel,
+                onBackClick = {
+                    navController.navigate("dashboard_screen")
+                },
+                onEditProfileClick = {
+                    navController.navigate("profile_screen")
+                }
             )
         }
 

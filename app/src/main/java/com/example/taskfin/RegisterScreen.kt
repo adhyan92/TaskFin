@@ -244,7 +244,7 @@ fun RegisterScreen(
                                 if (isPasswordVisible) R.drawable.ic_visibilityon else R.drawable.ic_visibilityoff
                             ),
                             contentDescription = "Toggle Password Visibility",
-                            tint = Color(0xFF8C8A9E),
+                            tint = Color(0xFFA09EB1),
                             modifier = Modifier
                                 .size(20.dp)
                                 .clickable(
@@ -279,7 +279,7 @@ fun RegisterScreen(
                                 if (isConfirmPasswordVisible) R.drawable.ic_visibilityon else R.drawable.ic_visibilityoff
                             ),
                             contentDescription = "Toggle Confirm Password Visibility",
-                            tint = Color(0xFF8C8A9E),
+                            tint = Color(0xFFA09EB1),
                             modifier = Modifier
                                 .size(20.dp)
                                 .clickable(
@@ -303,8 +303,20 @@ fun RegisterScreen(
 
                 RegisterBottomSection(
                     onRegisterNowClick = {
-                        viewModel.setRegisterData(fullName, email)
-                        onRegisterNowClick()
+                        // Validasi sederhana sebelum menyimpan data ke ViewModel
+                        if (fullName.isBlank() || email.isBlank() || password.isBlank()) {
+                            Toast.makeText(context, "Mohon lengkapi semua data", Toast.LENGTH_SHORT).show()
+                        } else if (password != confirmPassword) {
+                            Toast.makeText(context, "Konfirmasi kata sandi tidak cocok", Toast.LENGTH_SHORT).show()
+                        } else if (!isAgreed) {
+                            Toast.makeText(context, "Anda harus menyetujui Syarat & Ketentuan", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // 1. Simpan Nama, Email, dan Sandi dinamis milik user ke ViewModel
+                            viewModel.setRegisterData(fullName, email, password)
+
+                            // 2. Lanjut navigasi ke halaman berikutnya
+                            onRegisterNowClick()
+                        }
                     },
                     onGoogleClick = {
 

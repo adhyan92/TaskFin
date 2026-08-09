@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,10 +46,13 @@ import com.example.taskfin.ui.theme.Inter
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    onSettingsClick: () -> Unit = {}
 ){
+
     val mainVerticalScrollState = rememberScrollState()
     val context = LocalContext.current
+    val primaryColor = Color(0xFF3525CD)
 
     Scaffold(
         bottomBar = {
@@ -89,24 +94,21 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = "Settings",
-                        tint = Color(0xFF3525CD),
+                        painter = painterResource(id = R.drawable.ic_settings),
+                        contentDescription = "Pengaturan",
+                        tint = primaryColor,
                         modifier = Modifier
-                            .size(28.dp)
-                            .clickable {
-                                Toast.makeText(
-                                    context,
-                                    "Feature Coming Soon",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                            .size(22.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onSettingsClick() }
                     )
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Image(
-                        painter = painterResource(R.drawable.ic_profile),
+                        painter = painterResource(R.drawable.ic_person),
                         contentDescription = "Profile",
                         modifier = Modifier
                             .size(32.dp)

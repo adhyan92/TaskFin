@@ -22,6 +22,10 @@ class ProfileViewModel : ViewModel() {
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
 
+    // Variabel untuk menyimpan kata sandi dinamis tiap akun
+    private val _password = MutableStateFlow("")
+    val password: StateFlow<String> = _password.asStateFlow()
+
     private val _status = MutableStateFlow("")
     val status: StateFlow<String> = _status.asStateFlow()
 
@@ -47,13 +51,25 @@ class ProfileViewModel : ViewModel() {
     val phoneNumber: StateFlow<String> = _phoneNumber.asStateFlow()
 
     fun isEmailRegistered(userEmail: String): Boolean {
-
         return _email.value.isNotBlank() && _email.value.equals(userEmail, ignoreCase = true)
     }
 
-    fun setRegisterData(name: String, userEmail: String) {
+    // Perbarui fungsi register data agar sekaligus bisa menyimpan sandi yang diinput user
+    fun setRegisterData(name: String, userEmail: String, pass: String = "") {
         _fullName.value = name
         _email.value = userEmail
+        if (pass.isNotBlank()) {
+            _password.value = pass
+        }
+    }
+
+    // Fungsi khusus untuk mengatur atau memperbarui sandi (misal: saat Register atau Ubah Sandi)
+    fun setPassword(newPass: String) {
+        _password.value = newPass
+    }
+
+    fun updatePassword(newPass: String) {
+        _password.value = newPass
     }
 
     fun updateProfileData(

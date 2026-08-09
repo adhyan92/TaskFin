@@ -72,7 +72,7 @@ fun CustomTextField(
             Icon(
                 painter = leadingIcon,
                 contentDescription = null,
-                tint = if (enabled) Color(0xFF8C8A9E) else Color(0xFFA09EB1),
+                tint = if (enabled) Color(0xFF464555) else Color(0xFFA09EB1),
                 modifier = Modifier.size(20.dp)
             )
 
