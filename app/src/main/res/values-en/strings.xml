@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TaskFin</string>
+    <string name="settings_title">Settings</string>
+    <string name="taskfin_user">TaskFin User</string>
+    <string name="default_email">user@gmail.com</string>
+    <string name="adjust_preferences">Adjust your preferences and account</string>
+    <string name="account_section">ACCOUNT</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_password">Change Password</string>
+    <string name="logout">Log Out</string>
+    <string name="app_preference">APP PREFERENCES</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language_choice">Language Choice</string>
+    <string name="notification">Notifications</string>
+    <string name="task_notification">Task Notifications</string>
+    <string name="financial_notification">Financial Notifications</string>
+    <string name="manage_experience">Manage your shopping experience and financial\nsecurity in one place.</string>
+    <string name="reminder">Reminder</string>
+    <string name="select_language">Select Language</string>
+</resources>

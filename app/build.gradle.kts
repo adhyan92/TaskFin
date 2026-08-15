@@ -47,6 +47,8 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:34.17.0"))
     implementation("com.google.firebase:firebase-auth")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
 
     implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
     implementation("io.coil-kt:coil-compose:2.6.0")

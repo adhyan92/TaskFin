@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -36,6 +39,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -56,9 +62,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.taskfin.components.customTextFieldColors
 import com.example.taskfin.ui.theme.Inter
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.ui.res.stringResource
+import androidx.core.os.LocaleListCompat
+import android.content.Intent
+
 
 @Composable
 fun SettingsScreen(
@@ -68,17 +80,36 @@ fun SettingsScreen(
     onEditProfileClick: () -> Unit = {}
 ){
 
+    val currentLocaleTag = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+    val activeLanguageName = when {
+        currentLocaleTag.contains("es") -> "Spanyol"
+        currentLocaleTag.contains("en") -> "Inggris"
+        currentLocaleTag.contains("ja") -> "Jepang"
+        currentLocaleTag.contains("zh") -> "China"
+        else -> "Indonesia"
+    }
+
+    var selectedLanguage by remember { mutableStateOf(activeLanguageName) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
     val userName = viewModel.fullName.collectAsState("Pengguna TaskFin").value
     val userEmail = viewModel.email.collectAsState("user@gmail.com").value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
 
-    // Mengambil kata sandi dinamis milik user yang sedang aktif dari ViewModel
     val currentPassword = viewModel.password.collectAsState("").value
 
     val context = LocalContext.current
     val mainVerticalScrollState = rememberScrollState()
+
+    var isDarkMode by remember { mutableStateOf(false) }
+
     val primaryColor = Color(0xFF3525CD)
-    val backgroundColor = Color(0xFFF8F7FF)
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF8F7FF)
+    val surfaceColor = if (isDarkMode) Color(0xFF1E1E2C) else Color.White
+    val textColor = if (isDarkMode) Color(0xFFE0E0E0) else Color(0xFF1B1B24)
+    val subTextColor = if (isDarkMode) Color(0xFFA0A0AB) else Color(0xFF777587)
+    val dividerColor = if (isDarkMode) Color(0xFF2A2A3D) else Color(0xFFF3F3F6)
+    val cardBorderColor = if (isDarkMode) Color(0xFF2A2A3D) else Color(0xFFE5E7EB)
 
     var isChangingPassword by remember { mutableStateOf(false) }
 
@@ -103,7 +134,7 @@ fun SettingsScreen(
             .background(backgroundColor)
     ){
         Surface(
-            color = Color.White,
+            color = surfaceColor,
             shadowElevation = 8.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -138,7 +169,7 @@ fun SettingsScreen(
                 )
 
                 Text(
-                    text = if (isChangingPassword) "Ubah Kata Sandi" else "Pengaturan",
+                    text = if (isChangingPassword) stringResource(id = R.string.change_password) else stringResource(id = R.string.settings_title),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = primaryColor,
@@ -160,63 +191,65 @@ fun SettingsScreen(
             if (!isChangingPassword) {
                 Column(modifier = Modifier.fillMaxWidth()){
                     Text(
-                        text = "Sesuaikan preferensi dan akunmu",
+                        text = stringResource(id = R.string.adjust_preferences),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = Inter,
-                        color = Color(0xFF1B1B24)
+                        color = textColor
                     )
+
                     Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
-                        text = "Kelola pengalaman belanjamu dan keamanan\nfinansial dalam satu tempat.",
+                        text = stringResource(id = R.string.manage_experience),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         fontFamily = Inter,
-                        color = Color(0xFF464555)
+                        color = subTextColor
                     )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "AKUN",
+                    text = stringResource(id = R.string.account_section),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Inter,
-                    color = Color(0xFF777587)
+                    color = subTextColor
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // KARTU PROFIL LENGKAP KEMBALI DI SINI
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp)),
+                        .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Bagian Informasi Akun (Foto, Nama, Email)
+
+                        val leftLineModifier = Modifier.drawBehind {
+                            drawRect(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
+                                ),
+                                topLeft = Offset(0f, 0f),
+                                size = Size(6.dp.toPx(), size.height)
+                            )
+                        }
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .drawBehind {
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                        ),
-                                        size = Size(6.dp.toPx(), size.height)
-                                    )
-                                }
-                                .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                                .then(leftLineModifier)
+                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Spacer(modifier = Modifier.width(6.dp))
-
                             Box(modifier = Modifier.size(56.dp)) {
                                 Box(
                                     modifier = Modifier
@@ -227,7 +260,7 @@ fun SettingsScreen(
                                             color = if (profileImageUri != null) Color(0xFF3525CD) else Color(0xFFC7C4D8),
                                             shape = CircleShape
                                         )
-                                        .background(Color.White),
+                                        .background(surfaceColor),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (profileImageUri != null) {
@@ -243,7 +276,7 @@ fun SettingsScreen(
                                         Icon(
                                             imageVector = Icons.Default.Person,
                                             contentDescription = "Foto Profil",
-                                            tint = Color.Black,
+                                            tint = if (isDarkMode) Color.White else Color.Black,
                                             modifier = Modifier.size(32.dp)
                                         )
                                     }
@@ -274,44 +307,37 @@ fun SettingsScreen(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = userName.ifBlank { "Pengguna TaskFin" },
+                                    text = stringResource(id = R.string.taskfin_user),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = Inter,
-                                    color = Color(0xFF1B1B24)
+                                    color = textColor
                                 )
+
                                 Spacer(modifier = Modifier.height(2.dp))
+
                                 Text(
-                                    text = userEmail.ifBlank { "user@gmail.com" },
+                                    text = stringResource(id = R.string.default_email),
                                     fontSize = 13.sp,
                                     fontFamily = Inter,
-                                    color = Color(0xFF777587)
+                                    color = subTextColor
                                 )
                             }
                         }
 
-                        HorizontalDivider(color = Color(0xFFF3F3F6), thickness = 1.dp)
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                        // Menu Edit Profil
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .drawBehind {
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                        ),
-                                        size = Size(6.dp.toPx(), size.height)
-                                    )
-                                }
+                                .then(leftLineModifier)
                                 .clickable { onEditProfileClick() }
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 6.dp)
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_person),
@@ -321,11 +347,11 @@ fun SettingsScreen(
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = "Edit Profil",
+                                    text = stringResource(id = R.string.edit_profile),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     fontFamily = Inter,
-                                    color = Color(0xFF1B1B24)
+                                    color = textColor
                                 )
                             }
                             Icon(
@@ -335,28 +361,19 @@ fun SettingsScreen(
                             )
                         }
 
-                        HorizontalDivider(color = Color(0xFFF3F3F6), thickness = 1.dp)
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                        // Menu Ubah Kata Sandi
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .drawBehind {
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                        ),
-                                        size = Size(6.dp.toPx(), size.height)
-                                    )
-                                }
+                                .then(leftLineModifier)
                                 .clickable { isChangingPassword = true }
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 6.dp)
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_password),
@@ -366,11 +383,11 @@ fun SettingsScreen(
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = "Ubah Kata Sandi",
+                                    text = stringResource(id = R.string.change_password),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     fontFamily = Inter,
-                                    color = Color(0xFF1B1B24)
+                                    color = textColor
                                 )
                             }
                             Icon(
@@ -380,30 +397,21 @@ fun SettingsScreen(
                             )
                         }
 
-                        HorizontalDivider(color = Color(0xFFF3F3F6), thickness = 1.dp)
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                        // Menu Keluar dari Akun
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .drawBehind {
-                                    drawRect(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                        ),
-                                        size = Size(6.dp.toPx(), size.height)
-                                    )
-                                }
+                                .then(leftLineModifier)
                                 .clickable {
-                                    Toast.makeText(context, "Keluar dari Akun", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
                                 }
-                                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(start = 6.dp)
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_logout),
@@ -413,7 +421,7 @@ fun SettingsScreen(
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = "Keluar dari Akun",
+                                    text = stringResource(id = R.string.logout),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     fontFamily = Inter,
@@ -423,14 +431,244 @@ fun SettingsScreen(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(id = R.string.app_preference),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Inter,
+                    color = subTextColor
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        val leftLineModifier = Modifier.drawBehind {
+                            drawRect(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
+                                ),
+                                topLeft = Offset(0f, 0f),
+                                size = Size(6.dp.toPx(), size.height)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_mode),
+                                    contentDescription = null,
+                                    tint = Color(0xFF3525CD),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = stringResource(id = R.string.dark_mode),
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = Inter,
+                                    color = textColor
+                                )
+                            }
+                            Switch(
+                                checked = isDarkMode,
+                                onCheckedChange = { isDarkMode = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF3525CD)
+                                )
+                            )
+                        }
+
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .clickable { showLanguageDialog = true }
+                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_language),
+                                    contentDescription = null,
+                                    tint = Color(0xFF3525CD),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = stringResource(id = R.string.language_choice),
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = Inter,
+                                    color = textColor
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = selectedLanguage,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = Inter,
+                                    color = Color(0xFF3525CD)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF)
+                                )
+                            }
+                        }
+
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 6.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.notification),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Inter,
+                                color = subTextColor
+                            )
+                        }
+
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .clickable {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                }
+                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.task_notification),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                fontFamily = Inter,
+                                color = textColor
+                            )
+                            Switch(
+                                checked = false,
+                                onCheckedChange = {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF3525CD)
+                                )
+                            )
+                        }
+
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .clickable {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                }
+                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.financial_notification),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                fontFamily = Inter,
+                                color = textColor
+                            )
+                            Switch(
+                                checked = false,
+                                onCheckedChange = {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF3525CD)
+                                )
+                            )
+                        }
+
+                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .then(leftLineModifier)
+                                .clickable {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                }
+                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.reminder),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                fontFamily = Inter,
+                                color = textColor
+                            )
+                            Switch(
+                                checked = false,
+                                onCheckedChange = {
+                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = Color(0xFF3525CD)
+                                )
+                            )
+                        }
+                    }
+                }
             } else {
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Tampilan Form Ubah Sandi
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(
@@ -450,7 +688,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF777587))
+                            Text(text = "SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
                             Spacer(modifier = Modifier.height(6.dp))
                             OutlinedTextField(
                                 value = oldPassword,
@@ -465,7 +703,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "KONFIRMASI SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF777587))
+                            Text(text = "KONFIRMASI SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
                             Spacer(modifier = Modifier.height(6.dp))
                             OutlinedTextField(
                                 value = confirmOldPassword,
@@ -500,7 +738,7 @@ fun SettingsScreen(
                         AnimatedVisibility(visible = isOldPasswordVerified) {
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Spacer(modifier = Modifier.height(20.dp))
-                                HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+                                HorizontalDivider(color = dividerColor, thickness = 1.dp)
                                 Spacer(modifier = Modifier.height(20.dp))
 
                                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -563,6 +801,108 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+
+    if (showLanguageDialog) {
+
+        val languageMap = mapOf(
+            "Indonesia" to "id",
+            "Inggris" to "en",
+            "Jepang" to "ja",
+            "China" to "zh",
+            "Spanyol" to "es"
+        )
+        val languages = languageMap.keys.toList()
+
+        Dialog(onDismissRequest = { showLanguageDialog = false }) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(24.dp),
+                color = surfaceColor,
+                tonalElevation = 8.dp
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.select_language),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Inter,
+                        color = primaryColor
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        languages.forEach { lang ->
+                            val isSelected = selectedLanguage == lang
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable {
+                                        selectedLanguage = lang
+                                        showLanguageDialog = false
+
+                                        val languageCode = languageMap[lang] ?: "id"
+                                        val appLocale = LocaleListCompat.forLanguageTags(languageCode)
+                                        AppCompatDelegate.setApplicationLocales(appLocale)
+
+                                        Toast.makeText(context, "Bahasa diubah ke $lang", Toast.LENGTH_SHORT).show()
+
+                                        val intent = Intent(context, MainActivity::class.java).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        context.startActivity(intent)
+
+                                        (context as? android.app.Activity)?.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                                    },
+                                shape = RoundedCornerShape(12.dp),
+                                color = if (isSelected) primaryColor.copy(alpha = 0.1f) else dividerColor.copy(alpha = 0.4f),
+                                border = if (isSelected) BorderStroke(1.5.dp, primaryColor) else null
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 12.dp, horizontal = 16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = lang,
+                                        fontSize = 15.sp,
+                                        fontFamily = Inter,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (isSelected) primaryColor else textColor
+                                    )
+                                    if (isSelected) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .background(primaryColor, CircleShape),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.White,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

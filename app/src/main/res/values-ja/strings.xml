@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TaskFin</string>
+    <string name="settings_title">設定</string>
+    <string name="taskfin_user">TaskFinユーザー</string>
+    <string name="default_email">ユーザー@gmail.com</string>
+    <string name="adjust_preferences">好みやアカウントを調整する</string>
+    <string name="account_section">アカウント</string>
+    <string name="edit_profile">プロフィールを編集</string>
+    <string name="change_password">パスワードを変更</string>
+    <string name="logout">ログアウト</string>
+    <string name="app_preference">アプリの設定</string>
+    <string name="dark_mode">ダークモード</string>
+    <string name="language_choice">言語選択</string>
+    <string name="notification">通知</string>
+    <string name="task_notification">タスク通知</string>
+    <string name="manage_experience">ショッピング体験と金融セキュリティを\n一元管理します。</string>
+    <string name="financial_notification">財務通知</string>
+    <string name="reminder">リマインダー</string>
+    <string name="select_language">言語を選択</string>
+</resources>

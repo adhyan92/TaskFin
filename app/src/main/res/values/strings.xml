@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">TaskFin</string>
+        <string name="app_name">TaskFin</string>
+        <string name="settings_title">Pengaturan</string>
+        <string name="taskfin_user">Pengguna TaskFin</string>
+        <string name="default_email">pengguna@gmail.com</string>
+        <string name="adjust_preferences">Sesuaikan preferensi dan akunmu</string>
+        <string name="account_section">AKUN</string>
+        <string name="edit_profile">Edit Profil</string>
+        <string name="change_password">Ubah Kata Sandi</string>
+        <string name="logout">Keluar dari Akun</string>
+        <string name="app_preference">PREFERENSI APLIKASI</string>
+        <string name="dark_mode">Mode Gelap</string>
+        <string name="language_choice">Pilihan Bahasa</string>
+        <string name="notification">Notifikasi</string>
+        <string name="task_notification">Notifikasi Tugas</string>
+        <string name="financial_notification">Notifikasi Keuangan</string>
+        <string name="manage_experience">Kelola pengalaman belanjamu dan keamanan\nfinansial dalam satu tempat.</string>
+        <string name="reminder">Pengingat</string>
+        <string name="select_language">Pilih Bahasa</string>
 </resources>

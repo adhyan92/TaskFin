@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TaskFin</string>
+    <string name="settings_title">设置</string>
+    <string name="taskfin_user">TaskFin 用户</string>
+    <string name="default_email">用户@gmail.com</string>
+    <string name="adjust_preferences">调整您的偏好和账户</string>
+    <string name="account_section">账户</string>
+    <string name="edit_profile">编辑个人资料</string>
+    <string name="change_password">更改密码</string>
+    <string name="logout">退出登录</string>
+    <string name="app_preference">应用偏好</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="language_choice">语言选择</string>
+    <string name="notification">通知</string>
+    <string name="task_notification">任务通知</string>
+    <string name="manage_experience">在一个地方管理您的购物体验和\n财务安全。</string>
+    <string name="financial_notification">财务通知</string>
+    <string name="reminder">提醒</string>
+    <string name="select_language">选择语言</string>
+</resources>
