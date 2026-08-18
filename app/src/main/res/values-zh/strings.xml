@@ -17,4 +17,9 @@
     <string name="financial_notification">财务通知</string>
     <string name="reminder">提醒</string>
     <string name="select_language">选择语言</string>
+    <string name="security_privacy">安全与隐私</string>
+    <string name="manage_personal_data">管理个人数据</string>
+    <string name="app_permissions">应用权限</string>
+    <string name="delete_account">删除账户</string>
+    <string name="about_app">关于应用</string>
 </resources>

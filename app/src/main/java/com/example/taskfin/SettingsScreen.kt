@@ -70,12 +70,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import android.content.Intent
+import androidx.compose.material3.Scaffold
+import androidx.navigation.NavController
+import com.example.taskfin.components.CustomBottomBar
 
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel,
+    navController: NavController,
     onBackClick: () -> Unit = {},
     onEditProfileClick: () -> Unit = {}
 ){
@@ -128,305 +132,681 @@ fun SettingsScreen(
         }
     }
 
-    Column(
+    Scaffold(
+        bottomBar = {
+            CustomBottomBar(navController = navController)
+        },
         modifier = modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-    ){
-        Surface(
-            color = surfaceColor,
-            shadowElevation = 8.dp,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 56.dp, bottom = 16.dp)
-                    .padding(horizontal = 24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Kembali",
-                    tint = primaryColor,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .size(22.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (isChangingPassword) {
-                                isChangingPassword = false
-                                isOldPasswordVerified = false
-                                oldPassword = ""
-                                confirmOldPassword = ""
-                                newPassword = ""
-                                confirmNewPassword = ""
-                            } else {
-                                onBackClick()
-                            }
-                        }
-                )
-
-                Text(
-                    text = if (isChangingPassword) stringResource(id = R.string.change_password) else stringResource(id = R.string.settings_title),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryColor,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
+    ){ innerPadding ->
 
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .verticalScroll(mainVerticalScrollState)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.Start
+                .background(backgroundColor)
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ){
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            if (!isChangingPassword) {
-                Column(modifier = Modifier.fillMaxWidth()){
-                    Text(
-                        text = stringResource(id = R.string.adjust_preferences),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = Inter,
-                        color = textColor
+            Surface(
+                color = surfaceColor,
+                shadowElevation = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 56.dp, bottom = 16.dp)
+                        .padding(horizontal = 24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Kembali",
+                        tint = primaryColor,
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .size(22.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                if (isChangingPassword) {
+                                    isChangingPassword = false
+                                    isOldPasswordVerified = false
+                                    oldPassword = ""
+                                    confirmOldPassword = ""
+                                    newPassword = ""
+                                    confirmNewPassword = ""
+                                } else {
+                                    onBackClick()
+                                }
+                            }
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = if (isChangingPassword) stringResource(id = R.string.change_password) else stringResource(id = R.string.settings_title),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = primaryColor,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(mainVerticalScrollState)
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.Start
+            ){
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                if (!isChangingPassword) {
+                    Column(modifier = Modifier.fillMaxWidth()){
+                        Text(
+                            text = stringResource(id = R.string.adjust_preferences),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = Inter,
+                            color = textColor
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = stringResource(id = R.string.manage_experience),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = Inter,
+                            color = subTextColor
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = stringResource(id = R.string.manage_experience),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
+                        text = stringResource(id = R.string.account_section),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
                         fontFamily = Inter,
                         color = subTextColor
                     )
-                }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = stringResource(id = R.string.account_section),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = Inter,
-                    color = subTextColor
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = surfaceColor),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
-
-                        val leftLineModifier = Modifier.drawBehind {
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                ),
-                                topLeft = Offset(0f, 0f),
-                                size = Size(6.dp.toPx(), size.height)
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Box(modifier = Modifier.size(56.dp)) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(CircleShape)
-                                        .border(
-                                            width = 2.dp,
-                                            color = if (profileImageUri != null) Color(0xFF3525CD) else Color(0xFFC7C4D8),
-                                            shape = CircleShape
-                                        )
-                                        .background(surfaceColor),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (profileImageUri != null) {
-                                        AsyncImage(
-                                            model = profileImageUri,
-                                            contentDescription = "Foto Profil",
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .clip(CircleShape),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    } else {
+
+                            val leftLineModifier = Modifier.drawBehind {
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
+                                    ),
+                                    topLeft = Offset(0f, 0f),
+                                    size = Size(6.dp.toPx(), size.height)
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(modifier = Modifier.size(56.dp)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                            .border(
+                                                width = 2.dp,
+                                                color = if (profileImageUri != null) Color(0xFF3525CD) else Color(0xFFC7C4D8),
+                                                shape = CircleShape
+                                            )
+                                            .background(surfaceColor),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (profileImageUri != null) {
+                                            AsyncImage(
+                                                model = profileImageUri,
+                                                contentDescription = "Foto Profil",
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .clip(CircleShape),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.Default.Person,
+                                                contentDescription = "Foto Profil",
+                                                tint = if (isDarkMode) Color.White else Color.Black,
+                                                modifier = Modifier.size(32.dp)
+                                            )
+                                        }
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .background(Color(0xFF3525CD), CircleShape)
+                                            .clickable {
+                                                imagePickerLauncher.launch("image/*")
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
                                         Icon(
-                                            imageVector = Icons.Default.Person,
-                                            contentDescription = "Foto Profil",
-                                            tint = if (isDarkMode) Color.White else Color.Black,
-                                            modifier = Modifier.size(32.dp)
+                                            painter = painterResource(id = R.drawable.ic_edit),
+                                            contentDescription = "Ganti Foto",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(10.dp)
                                         )
                                     }
                                 }
 
-                                Box(
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .background(Color(0xFF3525CD), CircleShape)
-                                        .clickable {
-                                            imagePickerLauncher.launch("image/*")
-                                        },
-                                    contentAlignment = Alignment.Center
+                                Spacer(modifier = Modifier.width(14.dp))
+
+                                Column(
+                                    modifier = Modifier.weight(1f)
                                 ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_edit),
-                                        contentDescription = "Ganti Foto",
-                                        tint = Color.White,
-                                        modifier = Modifier.size(10.dp)
+                                    Text(
+                                        text = stringResource(id = R.string.taskfin_user),
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = Inter,
+                                        color = textColor
+                                    )
+
+                                    Spacer(modifier = Modifier.height(2.dp))
+
+                                    Text(
+                                        text = stringResource(id = R.string.default_email),
+                                        fontSize = 13.sp,
+                                        fontFamily = Inter,
+                                        color = subTextColor
                                     )
                                 }
                             }
 
-                            Spacer(modifier = Modifier.width(14.dp))
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                            Column(
-                                modifier = Modifier.weight(1f)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable { onEditProfileClick() }
+                                    .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_person),
+                                        contentDescription = null,
+                                        tint = Color(0xFF3525CD),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.edit_profile),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = Inter,
+                                        color = textColor
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable { isChangingPassword = true }
+                                    .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_password),
+                                        contentDescription = null,
+                                        tint = Color(0xFF3525CD),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.change_password),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = Inter,
+                                        color = textColor
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_logout),
+                                        contentDescription = null,
+                                        tint = Color(0xFFB91C1C),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.logout),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = Inter,
+                                        color = Color(0xFFB91C1C)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = stringResource(id = R.string.app_preference),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Inter,
+                        color = subTextColor
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = surfaceColor),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            val leftLineModifier = Modifier.drawBehind {
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
+                                    ),
+                                    topLeft = Offset(0f, 0f),
+                                    size = Size(6.dp.toPx(), size.height)
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_mode),
+                                        contentDescription = null,
+                                        tint = Color(0xFF3525CD),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.dark_mode),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = Inter,
+                                        color = textColor
+                                    )
+                                }
+                                Switch(
+                                    checked = isDarkMode,
+                                    onCheckedChange = { isDarkMode = it },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color.White,
+                                        checkedTrackColor = Color(0xFF3525CD)
+                                    )
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable { showLanguageDialog = true }
+                                    .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_language),
+                                        contentDescription = null,
+                                        tint = Color(0xFF3525CD),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = stringResource(id = R.string.language_choice),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        fontFamily = Inter,
+                                        color = textColor
+                                    )
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = selectedLanguage,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = Inter,
+                                        color = Color(0xFF3525CD)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.KeyboardArrowDown,
+                                        contentDescription = null,
+                                        tint = Color(0xFF9CA3AF)
+                                    )
+                                }
+                            }
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 6.dp)
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.taskfin_user),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = Inter,
-                                    color = textColor
-                                )
-
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                Text(
-                                    text = stringResource(id = R.string.default_email),
+                                    text = stringResource(id = R.string.notification),
                                     fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
                                     fontFamily = Inter,
                                     color = subTextColor
                                 )
                             }
-                        }
 
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable { onEditProfileClick() }
-                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_person),
-                                    contentDescription = null,
-                                    tint = Color(0xFF3525CD),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = stringResource(id = R.string.edit_profile),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
+                                    text = stringResource(id = R.string.task_notification),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
                                     fontFamily = Inter,
                                     color = textColor
                                 )
-                            }
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = Color(0xFF9CA3AF)
-                            )
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable { isChangingPassword = true }
-                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_password),
-                                    contentDescription = null,
-                                    tint = Color(0xFF3525CD),
-                                    modifier = Modifier.size(20.dp)
+                                Switch(
+                                    checked = false,
+                                    onCheckedChange = {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color.White,
+                                        checkedTrackColor = Color(0xFF3525CD)
+                                    )
                                 )
-                                Spacer(modifier = Modifier.width(16.dp))
+                            }
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
                                 Text(
-                                    text = stringResource(id = R.string.change_password),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
+                                    text = stringResource(id = R.string.financial_notification),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
                                     fontFamily = Inter,
                                     color = textColor
                                 )
+                                Switch(
+                                    checked = false,
+                                    onCheckedChange = {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color.White,
+                                        checkedTrackColor = Color(0xFF3525CD)
+                                    )
+                                )
                             }
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = Color(0xFF9CA3AF)
-                            )
+
+                            HorizontalDivider(color = dividerColor, thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(leftLineModifier)
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.reminder),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    fontFamily = Inter,
+                                    color = textColor
+                                )
+                                Switch(
+                                    checked = false,
+                                    onCheckedChange = {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color.White,
+                                        checkedTrackColor = Color(0xFF3525CD)
+                                    )
+                                )
+                            }
                         }
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = surfaceColor),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                .padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(text = "Task", fontSize = 28.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF3525CD))
+                                Text(text = "Fin", fontSize = 28.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF1E5631))
+                            }
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(text = "SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
+                                Spacer(modifier = Modifier.height(6.dp))
+                                OutlinedTextField(
+                                    value = oldPassword,
+                                    onValueChange = { oldPassword = it },
+                                    placeholder = { Text("Masukkan sandi lama", color = Color.Gray, fontFamily = Inter) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = customTextFieldColors()
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(text = "KONFIRMASI SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
+                                Spacer(modifier = Modifier.height(6.dp))
+                                OutlinedTextField(
+                                    value = confirmOldPassword,
+                                    onValueChange = { confirmOldPassword = it },
+                                    placeholder = { Text("Konfirmasi sandi lama", color = Color.Gray, fontFamily = Inter) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = customTextFieldColors()
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Button(
+                                onClick = {
+                                    if (oldPassword.isBlank() || confirmOldPassword.isBlank()) {
+                                        Toast.makeText(context, "Mohon isi sandi lama terlebih dahulu", Toast.LENGTH_SHORT).show()
+                                    } else if (oldPassword == currentPassword && confirmOldPassword == currentPassword) {
+                                        isOldPasswordVerified = true
+                                        Toast.makeText(context, "Sandi lama benar", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Sandi lama salah atau tidak cocok", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                            ) {
+                                Text(text = "Ubah Sandi", fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color.White)
+                            }
+
+                            AnimatedVisibility(visible = isOldPasswordVerified) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    HorizontalDivider(color = dividerColor, thickness = 1.dp)
+                                    Spacer(modifier = Modifier.height(20.dp))
+
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Text(text = "SANDI BARU", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = primaryColor)
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        OutlinedTextField(
+                                            value = newPassword,
+                                            onValueChange = { newPassword = it },
+                                            placeholder = { Text("Masukkan sandi baru", color = Color.Gray, fontFamily = Inter) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(12.dp),
+                                            colors = customTextFieldColors()
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Text(text = "KONFIRMASI SANDI BARU", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = primaryColor)
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        OutlinedTextField(
+                                            value = confirmNewPassword,
+                                            onValueChange = { confirmNewPassword = it },
+                                            placeholder = { Text("Konfirmasi sandi baru", color = Color.Gray, fontFamily = Inter) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(12.dp),
+                                            colors = customTextFieldColors()
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(20.dp))
+
+                                    Button(
+                                        onClick = {
+                                            if (newPassword.isBlank() || confirmNewPassword.isBlank()) {
+                                                Toast.makeText(context, "Sandi baru tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                                            } else if (newPassword == confirmNewPassword) {
+                                                viewModel.updatePassword(newPassword)
+                                                Toast.makeText(context, "Kata sandi berhasil diperbarui!", Toast.LENGTH_SHORT).show()
+                                                isChangingPassword = false
+                                                isOldPasswordVerified = false
+                                                oldPassword = ""
+                                                confirmOldPassword = ""
+                                                newPassword = ""
+                                                confirmNewPassword = ""
+                                            } else {
+                                                Toast.makeText(context, "Konfirmasi sandi baru tidak cocok", Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                                    ) {
+                                        Text(text = "Simpan Sandi Baru", fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color.White)
+                                    }
                                 }
-                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_logout),
-                                    contentDescription = null,
-                                    tint = Color(0xFFB91C1C),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = stringResource(id = R.string.logout),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    fontFamily = Inter,
-                                    color = Color(0xFFB91C1C)
-                                )
                             }
                         }
                     }
@@ -435,373 +815,324 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = stringResource(id = R.string.app_preference),
+                    text = stringResource(id = R.string.security_privacy),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Inter,
                     color = subTextColor
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, cardBorderColor, RoundedCornerShape(12.dp)),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        val leftLineModifier = Modifier.drawBehind {
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF3525CD), Color(0xFF4F46E5))
-                                ),
-                                topLeft = Offset(0f, 0f),
-                                size = Size(6.dp.toPx(), size.height)
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_mode),
-                                    contentDescription = null,
-                                    tint = Color(0xFF3525CD),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = stringResource(id = R.string.dark_mode),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    fontFamily = Inter,
-                                    color = textColor
-                                )
-                            }
-                            Switch(
-                                checked = isDarkMode,
-                                onCheckedChange = { isDarkMode = it },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = Color(0xFF3525CD)
-                                )
-                            )
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable { showLanguageDialog = true }
-                                .padding(start = 22.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_language),
-                                    contentDescription = null,
-                                    tint = Color(0xFF3525CD),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = stringResource(id = R.string.language_choice),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    fontFamily = Inter,
-                                    color = textColor
-                                )
-                            }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = selectedLanguage,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = Inter,
-                                    color = Color(0xFF3525CD)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null,
-                                    tint = Color(0xFF9CA3AF)
-                                )
-                            }
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .padding(start = 22.dp, end = 16.dp, top = 14.dp, bottom = 6.dp)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.notification),
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = Inter,
-                                color = subTextColor
-                            )
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                }
-                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.task_notification),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = Inter,
-                                color = textColor
-                            )
-                            Switch(
-                                checked = false,
-                                onCheckedChange = {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = Color(0xFF3525CD)
-                                )
-                            )
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                }
-                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.financial_notification),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = Inter,
-                                color = textColor
-                            )
-                            Switch(
-                                checked = false,
-                                onCheckedChange = {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = Color(0xFF3525CD)
-                                )
-                            )
-                        }
-
-                        HorizontalDivider(color = dividerColor, thickness = 1.dp)
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .then(leftLineModifier)
-                                .clickable {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                }
-                                .padding(start = 22.dp, end = 16.dp, top = 12.dp, bottom = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.reminder),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = Inter,
-                                color = textColor
-                            )
-                            Switch(
-                                checked = false,
-                                onCheckedChange = {
-                                    Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = Color(0xFF3525CD)
-                                )
-                            )
-                        }
-                    }
-                }
-            } else {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = surfaceColor),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(text = "Task", fontSize = 28.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF3525CD))
-                            Text(text = "Fin", fontSize = 28.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color(0xFF1E5631))
-                        }
 
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
-                            Spacer(modifier = Modifier.height(6.dp))
-                            OutlinedTextField(
-                                value = oldPassword,
-                                onValueChange = { oldPassword = it },
-                                placeholder = { Text("Masukkan sandi lama", color = Color.Gray, fontFamily = Inter) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = customTextFieldColors()
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "KONFIRMASI SANDI LAMA", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = subTextColor)
-                            Spacer(modifier = Modifier.height(6.dp))
-                            OutlinedTextField(
-                                value = confirmOldPassword,
-                                onValueChange = { confirmOldPassword = it },
-                                placeholder = { Text("Konfirmasi sandi lama", color = Color.Gray, fontFamily = Inter) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = customTextFieldColors()
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            onClick = {
-                                if (oldPassword.isBlank() || confirmOldPassword.isBlank()) {
-                                    Toast.makeText(context, "Mohon isi sandi lama terlebih dahulu", Toast.LENGTH_SHORT).show()
-                                } else if (oldPassword == currentPassword && confirmOldPassword == currentPassword) {
-                                    isOldPasswordVerified = true
-                                    Toast.makeText(context, "Sandi lama benar", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, "Sandi lama salah atau tidak cocok", Toast.LENGTH_SHORT).show()
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth().height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-                        ) {
-                            Text(text = "Ubah Sandi", fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color.White)
-                        }
-
-                        AnimatedVisibility(visible = isOldPasswordVerified) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Spacer(modifier = Modifier.height(20.dp))
-                                HorizontalDivider(color = dividerColor, thickness = 1.dp)
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Text(text = "SANDI BARU", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = primaryColor)
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = newPassword,
-                                        onValueChange = { newPassword = it },
-                                        placeholder = { Text("Masukkan sandi baru", color = Color.Gray, fontFamily = Inter) },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = customTextFieldColors()
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 0.dp, top = 14.dp)
+                                .width(4.dp)
+                                .height(132.dp)
+                                .clip(RoundedCornerShape(topEnd = 60.dp, bottomEnd = 60.dp))
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0xFF006C49),
+                                            Color(0xFF4EDEA3)
+                                        )
                                     )
-                                }
+                                )
+                        )
 
-                                Spacer(modifier = Modifier.height(16.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
 
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Text(text = "KONFIRMASI SANDI BARU", fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = primaryColor)
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    OutlinedTextField(
-                                        value = confirmNewPassword,
-                                        onValueChange = { confirmNewPassword = it },
-                                        placeholder = { Text("Konfirmasi sandi baru", color = Color.Gray, fontFamily = Inter) },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = customTextFieldColors()
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                Button(
-                                    onClick = {
-                                        if (newPassword.isBlank() || confirmNewPassword.isBlank()) {
-                                            Toast.makeText(context, "Sandi baru tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                                        } else if (newPassword == confirmNewPassword) {
-                                            viewModel.updatePassword(newPassword)
-                                            Toast.makeText(context, "Kata sandi berhasil diperbarui!", Toast.LENGTH_SHORT).show()
-                                            isChangingPassword = false
-                                            isOldPasswordVerified = false
-                                            oldPassword = ""
-                                            confirmOldPassword = ""
-                                            newPassword = ""
-                                            confirmNewPassword = ""
-                                        } else {
-                                            Toast.makeText(context, "Konfirmasi sandi baru tidak cocok", Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
-                                    Text(text = "Simpan Sandi Baru", fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = Inter, color = Color.White)
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_database),
+                                        contentDescription = null,
+                                        tint = Color(0xFF006C49),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.manage_personal_data),
+                                        fontSize = 15.sp,
+                                        fontFamily = Inter,
+                                        fontWeight = FontWeight.Medium,
+                                        color = textColor
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor.copy(alpha = 0.4f), thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_security),
+                                        contentDescription = null,
+                                        tint = Color(0xFF006C49),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.app_permissions),
+                                        fontSize = 15.sp,
+                                        fontFamily = Inter,
+                                        fontWeight = FontWeight.Medium,
+                                        color = textColor
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor.copy(alpha = 0.4f), thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_trash_account),
+                                        contentDescription = null,
+                                        tint = Color(0xFFC62828),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.delete_account),
+                                        fontSize = 15.sp,
+                                        fontFamily = Inter,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color(0xFFC62828)
+                                    )
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(id = R.string.about_app),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Inter,
+                    color = subTextColor
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = surfaceColor),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
+                    ) {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "TaskFin",
+                                    fontSize = 16.sp,
+                                    fontFamily = Inter,
+                                    fontWeight = FontWeight.Bold,
+                                    color = primaryColor
+                                )
+
+                                Box(modifier = Modifier.height(24.dp))
+                            }
+
+                            HorizontalDivider(color = dividerColor.copy(alpha = 0.4f), thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "Kebijakan Privasi",
+                                    fontSize = 15.sp,
+                                    fontFamily = Inter,
+                                    fontWeight = FontWeight.Medium,
+                                    color = textColor
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_open_new),
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor.copy(alpha = 0.4f), thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "Syarat & Ketentuan",
+                                    fontSize = 15.sp,
+                                    fontFamily = Inter,
+                                    fontWeight = FontWeight.Medium,
+                                    color = textColor
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_open_new),
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA3AF),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            HorizontalDivider(color = dividerColor.copy(alpha = 0.4f), thickness = 1.dp)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "Hubungi Dukungan",
+                                    fontSize = 15.sp,
+                                    fontFamily = Inter,
+                                    fontWeight = FontWeight.Medium,
+                                    color = textColor
+                                )
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_email),
+                                    contentDescription = null,
+                                    tint = primaryColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(80.dp))
+
+                Button(
+                    onClick = {
+                        Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_save),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "Simpan Perubahan",
+                            fontSize = 16.sp,
+                            fontFamily = Inter,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
+
     }
 
     if (showLanguageDialog) {

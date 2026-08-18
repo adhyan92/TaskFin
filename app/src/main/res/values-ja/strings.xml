@@ -17,4 +17,9 @@
     <string name="financial_notification">財務通知</string>
     <string name="reminder">リマインダー</string>
     <string name="select_language">言語を選択</string>
+    <string name="security_privacy">セキュリティとプライバシー</string>
+    <string name="manage_personal_data">個人データの管理</string>
+    <string name="app_permissions">アプリの権限</string>
+    <string name="delete_account">アカウントの削除</string>
+    <string name="about_app">アプリについて</string>
 </resources>

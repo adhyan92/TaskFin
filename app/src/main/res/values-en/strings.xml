@@ -17,4 +17,9 @@
     <string name="manage_experience">Manage your shopping experience and financial\nsecurity in one place.</string>
     <string name="reminder">Reminder</string>
     <string name="select_language">Select Language</string>
+    <string name="security_privacy">SECURITY &amp; PRIVACY</string>
+    <string name="manage_personal_data">Manage Personal Data</string>
+    <string name="app_permissions">App Permissions</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="about_app">ABOUT APP</string>
 </resources>

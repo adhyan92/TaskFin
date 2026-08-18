@@ -57,15 +57,16 @@ fun DashboardScreen(
     Scaffold(
         bottomBar = {
             CustomBottomBar(navController = navController)
-        }
-    ) { innerPadding ->
+        },
+        modifier = modifier
+    ){ innerPadding ->
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 60.dp)
-                .padding(bottom = innerPadding.calculateBottomPadding())
                 .verticalScroll(mainVerticalScrollState)
+                .padding(top = 60.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding()),
         ){
             Row(
                 modifier = Modifier
@@ -476,7 +477,7 @@ fun DashboardScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(34.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

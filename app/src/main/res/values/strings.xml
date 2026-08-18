@@ -17,4 +17,9 @@
         <string name="manage_experience">Kelola pengalaman belanjamu dan keamanan\nfinansial dalam satu tempat.</string>
         <string name="reminder">Pengingat</string>
         <string name="select_language">Pilih Bahasa</string>
+        <string name="security_privacy">KEAMANAN &amp; PRIVASI</string>
+        <string name="manage_personal_data">Kelola Data Pribadi</string>
+        <string name="app_permissions">Izin Akses Aplikasi</string>
+        <string name="delete_account">Hapus Akun</string>
+        <string name="about_app">TENTANG APLIKASI</string>
 </resources>

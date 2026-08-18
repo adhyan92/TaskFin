@@ -17,4 +17,9 @@
     <string name="financial_notification">Notificaciones financieras</string>
     <string name="reminder">Recordatorio</string>
     <string name="select_language">Seleccionar idioma</string>
+    <string name="security_privacy">SEGURIDAD Y PRIVACIDAD</string>
+    <string name="manage_personal_data">Gestionar datos personales</string>
+    <string name="app_permissions">Permisos de la aplicación</string>
+    <string name="delete_account">Eliminar cuenta</string>
+    <string name="about_app">ACERCA DE LA APLICACIÓN</string>
 </resources>

@@ -112,6 +112,7 @@ fun NavApp(
             SettingsScreen(
                 modifier = Modifier,
                 viewModel = profileViewModel,
+                navController = navController,
                 onBackClick = {
                     navController.navigate("dashboard_screen")
                 },
