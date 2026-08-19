@@ -388,7 +388,7 @@ fun SettingsScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_password),
+                                        painter = painterResource(id = R.drawable.ic_lock_password),
                                         contentDescription = null,
                                         tint = Color(0xFF3525CD),
                                         modifier = Modifier.size(20.dp)
@@ -837,9 +837,9 @@ fun SettingsScreen(
 
                         Box(
                             modifier = Modifier
-                                .padding(start = 0.dp, top = 14.dp)
+                                .padding(start = 0.dp)
                                 .width(4.dp)
-                                .height(132.dp)
+                                .height(130.dp)
                                 .clip(RoundedCornerShape(topEnd = 60.dp, bottomEnd = 60.dp))
                                 .background(
                                     brush = Brush.verticalGradient(

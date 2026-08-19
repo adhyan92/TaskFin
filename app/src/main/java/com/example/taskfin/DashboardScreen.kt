@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -22,10 +23,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.taskfin.components.CustomBottomBar
 import com.example.taskfin.ui.theme.Inter
 
@@ -47,12 +53,17 @@ import com.example.taskfin.ui.theme.Inter
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    onSettingsClick: () -> Unit = {}
+    viewModel: ProfileViewModel,
+    onSettingsClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ){
 
     val mainVerticalScrollState = rememberScrollState()
     val context = LocalContext.current
     val primaryColor = Color(0xFF3525CD)
+
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val profileImageUri = viewModel.profileImageUri.collectAsState().value
 
     Scaffold(
         bottomBar = {
@@ -108,20 +119,38 @@ fun DashboardScreen(
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    Image(
-                        painter = painterResource(R.drawable.ic_person),
-                        contentDescription = "Profile",
+                    Box(
                         modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
-                            .clickable {
-                                Toast.makeText(
-                                    context,
-                                    "Feature Coming Soon",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                    )
+                            .border(
+                                width = 2.dp,
+                                color = if (profileImageUri != null) Color(0xFF3525CD) else Color(0xFFC7C4D8),
+                                shape = CircleShape
+                            )
+                            .background(surfaceColor)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onProfileClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (profileImageUri != null) {
+                            AsyncImage(
+                                model = profileImageUri,
+                                contentDescription = "Profile Preview",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Foto Profil",
+                                tint = Color.Black,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
                 }
             }
 

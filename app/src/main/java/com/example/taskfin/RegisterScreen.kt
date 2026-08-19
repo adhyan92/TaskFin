@@ -236,7 +236,7 @@ fun RegisterScreen(
                     value = password,
                     onValueChange = { password = it },
                     placeholder = "••••••••",
-                    leadingIcon = painterResource(R.drawable.ic_password),
+                    leadingIcon = painterResource(R.drawable.ic_lock_password),
                     visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         Icon(
@@ -303,7 +303,7 @@ fun RegisterScreen(
 
                 RegisterBottomSection(
                     onRegisterNowClick = {
-                        // Validasi sederhana sebelum menyimpan data ke ViewModel
+
                         if (fullName.isBlank() || email.isBlank() || password.isBlank()) {
                             Toast.makeText(context, "Mohon lengkapi semua data", Toast.LENGTH_SHORT).show()
                         } else if (password != confirmPassword) {
@@ -311,10 +311,9 @@ fun RegisterScreen(
                         } else if (!isAgreed) {
                             Toast.makeText(context, "Anda harus menyetujui Syarat & Ketentuan", Toast.LENGTH_SHORT).show()
                         } else {
-                            // 1. Simpan Nama, Email, dan Sandi dinamis milik user ke ViewModel
+
                             viewModel.setRegisterData(fullName, email, password)
 
-                            // 2. Lanjut navigasi ke halaman berikutnya
                             onRegisterNowClick()
                         }
                     },

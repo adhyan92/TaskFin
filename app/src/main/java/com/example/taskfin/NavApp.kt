@@ -102,8 +102,12 @@ fun NavApp(
             DashboardScreen(
                 modifier = Modifier,
                 navController = navController,
+                viewModel = profileViewModel,
                 onSettingsClick = {
                     navController.navigate("settings_screen")
+                },
+                onProfileClick = {
+                    navController.navigate("profile_screen")
                 }
             )
         }
@@ -128,6 +132,7 @@ fun NavApp(
                 navController = navController,
                 viewModel = profileViewModel,
                 onSettingsClick = {
+                    navController.navigate("settings_screen")
                 },
                 onBackClick = {
                     navController.popBackStack()
